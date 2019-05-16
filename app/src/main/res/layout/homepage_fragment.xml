@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="500dp">
         <ImageButton
-            android:id="@+id/Button_Closet"
+            android:id="@+id/Add_Button"
             android:src="@drawable/ic_add_black_48dp"
             android:background="@color/colorAccent"
             android:shadowColor="@color/colorPrimaryDark"
@@ -30,42 +30,24 @@
             app:cardCornerRadius="4dp"
             android:elevation="5dp"
             android:layout_gravity="end|top"
-            android:background=""
             app:layout_heightPercent="50%"
-            app:layout_widthPercent="50%">
-
-            <!--<TextView-->
-                <!--android:id="@+id/title_city"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_above="@+id/title_update_time"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:text="@string/title_city"-->
-                <!--android:textAlignment="center"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="20sp" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/title_update_time"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/title_time"-->
-                <!--android:textAlignment="center"-->
-                <!--android:textColor="#fff"-->
-                <!--android:textSize="16sp" />-->
-
+            app:layout_widthPercent="50%"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
+            >
+            <include layout="@layout/weather_fragment"/>
         </android.support.v7.widget.CardView>
 
         <Button
             android:id="@+id/button3"
-            android:layout_gravity="left|bottom"
+            android:layout_gravity="start|bottom"
+            android:background="#FFFFFF"
             android:text="Button 3"
             app:layout_heightPercent="75%"
             app:layout_widthPercent="50%" />
 
         <Button
             android:id="@+id/button4"
-            android:layout_gravity="right|bottom"
+            android:layout_gravity="end|bottom"
             android:text="Button 4"
             app:layout_heightPercent="50%"
             app:layout_widthPercent="50%" />

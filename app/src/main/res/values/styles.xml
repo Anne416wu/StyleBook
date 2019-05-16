@@ -3,8 +3,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#2486B9</item>
-        <item name="colorPrimaryDark">#66C18C</item>
+        <item name="colorPrimaryDark">#2486B9</item>
+        <item name="colorPrimary">#66C18C</item>
         <item name="colorAccent">#eea2a4</item>
     </style>
 
