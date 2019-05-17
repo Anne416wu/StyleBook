@@ -20,7 +20,6 @@
             android:src="@drawable/ic_add_black_48dp"
             android:background="@color/colorAccent"
             android:shadowColor="@color/colorPrimaryDark"
-            android:text="Add new"
             android:layout_gravity="start|top"
             app:layout_heightPercent="25%"
             app:layout_widthPercent="50%" />
