@@ -1,10 +1,12 @@
-package com.example.stylebook;
+package com.example.stylebook.Closet;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import com.example.stylebook.R;
 
 public class ClosetAddActivity extends AppCompatActivity {
     @Override

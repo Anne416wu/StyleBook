@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.example.stylebook.Closet.ClosetAddActivity;
+
 public class HomepageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
@@ -16,7 +18,7 @@ public class HomepageFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),ClosetAddActivity.class);
+                Intent intent = new Intent(getActivity(), ClosetAddActivity.class);
                 startActivity(intent);
 
             }
