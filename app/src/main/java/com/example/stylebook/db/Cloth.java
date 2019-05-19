@@ -1,21 +1,47 @@
 package com.example.stylebook.db;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 
+import org.litepal.crud.LitePalSupport;
+
+import java.util.Calendar;
 import java.util.Date;
 
-public class Cloth {
-    protected  String name;
-    protected int imageId;
-    protected Color color;
-    protected String material;
-    protected String season;
-    protected Date buyDate;
-    protected String type;
-    public Cloth(String name,int imageId){
+public class Cloth extends LitePalSupport {
+    private  String name;
+    private int imageId;
+    private Color color;
+    private String material;
+    private int season;
+    private Calendar buyDate;
+    private String type;
+    private int temprature;
+    public Cloth(){};
+    public Cloth(String name, int imageId){
         this.name=name;
         this.imageId=imageId;
     }
+    public Cloth(String name, int imageId, Color color,String material,int season,Calendar buyDate,String type,int temprature){
+        this.name=name;
+        this.imageId=imageId;
+        this.color=color;
+        this.material=material;
+        this.season=season;
+        this.buyDate=buyDate;
+        this.type=type;
+        this.temprature=temprature;
+    }
+    public int gettemprature() {
+        return temprature;
+    }
+
+    public void settemprature(int temprature) {
+        this.temprature = temprature;
+    }
+
+
     public String getName(){
         return name;
     }
@@ -48,19 +74,19 @@ public class Cloth {
         this.material = material;
     }
 
-    public String getSeason() {
+    public int getSeason() {
         return season;
     }
 
-    public void setSeason(String season) {
+    public void setSeason(int season) {
         this.season = season;
     }
 
-    public Date getBuyDate() {
+    public Calendar getBuyDate() {
         return buyDate;
     }
 
-    public void setBuyDate(Date buyDate) {
+    public void setBuyDate(Calendar buyDate) {
         this.buyDate = buyDate;
     }
 

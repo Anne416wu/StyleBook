@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.stylebook.Closet.ClothParentActivity;
+import com.example.stylebook.ClothParentActivity;
 import com.example.stylebook.R;
 
 import java.util.List;

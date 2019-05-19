@@ -12,12 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.stylebook.Closet.ClothChildActivity;
-import com.example.stylebook.Closet.ClothParentActivity;
+import com.example.stylebook.ClothChildActivity;
 import com.example.stylebook.R;
 
 import java.util.List;
-import java.util.Random;
 
 public class HoodieAdapter extends RecyclerView.Adapter<HoodieAdapter.ViewHolder>{
 

@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.stylebook.Closet.ClosetAddActivity;
 import com.example.stylebook.db.Cloth;
 import com.example.stylebook.db.ClothAdapter;
 import com.example.stylebook.db.ClothAdapterRound;

@@ -3,7 +3,6 @@
   <component name="Statistic">
     <option name="excludedDirectories">
       <list>
-        <option value="$PROJECT_DIR$/app/libs" />
         <option value="$PROJECT_DIR$/app/build" />
         <option value="$PROJECT_DIR$/gradle" />
       </list>
