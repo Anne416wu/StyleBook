@@ -38,23 +38,133 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <LinearLayout
-            android:orientation="vertical"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/linearLayout_cloth_child">
+            android:layout_height="wrap_content">
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                app:cardCornerRadius="5dp">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="35dp"
+                app:cardCornerRadius="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:id="@+id/cloth_content_text" />
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        >
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_margin="20dp"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="名称"/>
+                            <TextView
+                                android:id="@+id/edit_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="颜色"/>
+                            <TextView
+                                android:id="@+id/color_panel_view"
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="主要材质"/>
+                            <TextView
+                                android:id="@+id/edi_material"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:maxLines="1"
+                                />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="上市季节"/>
+                            <TextView
+                                android:id="@+id/spinner_season"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                android:spinnerMode="dropdown"
+                                >
+                            </TextView>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_margin="20dp"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="购入时间"/>
+                            <Button
+                                android:textAlignment="center"
+                                android:textSize="20sp"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/standard50"
+                                android:id="@+id/text_date_picker"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="种类"/>
+                            <TextView
+                                android:id="@+id/spinner_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                >
+                            </TextView>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="textStart"
+                                android:text="适宜温度"/>
+                            <TextView
+                                android:id="@+id/spinner_temprature"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dp_40"
+                                >
+                            </TextView>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/imageview_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="150dp"
+                        android:layout_weight="1"
+                        android:scaleType="center"
+                        />
+                </LinearLayout>
             </android.support.v7.widget.CardView>
-        </LinearLayout>
+        </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -1,6 +1,7 @@
 package com.example.stylebook.db;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 
@@ -12,18 +13,19 @@ import java.util.Date;
 public class Cloth extends LitePalSupport {
     private  String name;
     private int imageId;
-    private Color color;
+    private int color;
     private String material;
     private int season;
     private Calendar buyDate;
     private String type;
     private int temprature;
+    private Bitmap bitmap;
     public Cloth(){};
     public Cloth(String name, int imageId){
         this.name=name;
         this.imageId=imageId;
     }
-    public Cloth(String name, int imageId, Color color,String material,int season,Calendar buyDate,String type,int temprature){
+    public Cloth(String name, int imageId, int color,String material,int season,Calendar buyDate,String type,int temprature){
         this.name=name;
         this.imageId=imageId;
         this.color=color;
@@ -33,15 +35,22 @@ public class Cloth extends LitePalSupport {
         this.type=type;
         this.temprature=temprature;
     }
-    public int gettemprature() {
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public int getTemprature() {
         return temprature;
     }
 
-    public void settemprature(int temprature) {
+    public void setTemprature(int temprature) {
         this.temprature = temprature;
     }
-
-
     public String getName(){
         return name;
     }
@@ -58,11 +67,11 @@ public class Cloth extends LitePalSupport {
         this.imageId = imageId;
     }
 
-    public Color getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

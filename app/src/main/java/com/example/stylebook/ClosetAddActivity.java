@@ -1,15 +1,35 @@
 package com.example.stylebook;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -17,6 +37,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -26,22 +48,35 @@ import com.jrummyapps.android.colorpicker.ColorPickerDialog;
 import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
 import com.jrummyapps.android.colorpicker.ColorPickerView;
 
+import org.litepal.LitePal;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import id.zelory.compressor.Compressor;
+
 import static java.lang.reflect.Array.set;
 
 public class ClosetAddActivity extends AppCompatActivity {
-    private static final String TAG = "ClosetAddActivity";
-    private ColorPanelView colorPickerViewModel;
-    private EditText editName,editMaterial;
-    private Spinner season,temprature,types;
-    private Button buyTime;
-    private Calendar pickDate=Calendar.getInstance();
-    private List<String>getSeasonData(){
+    protected static final String TAG = "ClosetAddActivity";
+    public static final int TAKE_PHOTO = 1;
+    public static final int CHOOSE_PHOTO = 2;
+    public static final int CROP_PHOTO = 3;
+    protected ImageView preview;
+    protected Uri imageUri;
+    protected ColorPanelView colorPickerViewModel;
+    protected EditText editName,editMaterial;
+    protected Spinner season,temprature,types;
+    protected Button buyTime;
+    protected Calendar pickDate=Calendar.getInstance();
+     Cloth cloth=new Cloth();
+    protected List<String>getSeasonData(){
         List<String> dataList = new ArrayList<String>();
         dataList.add("Spring");
         dataList.add("Summer");
@@ -49,14 +84,14 @@ public class ClosetAddActivity extends AppCompatActivity {
         dataList.add("Winter");
         return dataList;
     }
-    private List<String>getTemData(){
+    protected List<String>getTemData(){
         List<String> dataList = new ArrayList<String>();
         for (int i=1;i<=8;i++){
             dataList.add(i+"");
         }
         return dataList;
     }
-    private List<String>getTypeData(){
+    protected List<String>getTypeData(){
         List<String> dataList = new ArrayList<String>();
         dataList.add("Coat");dataList.add("Sweater");dataList.add("Shirt");dataList.add("T-shirt");dataList.add("Hoodie");
         dataList.add("Dress");dataList.add("Skirt");dataList.add("Jeans");dataList.add("Trouser");dataList.add("Shorts");
@@ -66,7 +101,42 @@ public class ClosetAddActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.closet_item_add);
-        final Cloth cloth = new Cloth();
+        preview = (ImageView) findViewById(R.id.imageview_preview);
+        ImageButton takePhoto = (ImageButton) findViewById(R.id.button_open_camera);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        takePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //创建File对象，用于存储拍照后的图片
+                File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
+                try{
+                    if (outputImage.exists()){
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                imageUri = FileProvider.getUriForFile(ClosetAddActivity.this,"com.example.stylebook.fileprovider",outputImage);
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                startActivityForResult(intent,TAKE_PHOTO);
+            }
+        });
+        ImageButton chooseFromGallery = (ImageButton)findViewById(R.id.button_open_gallery);
+        chooseFromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ContextCompat.checkSelfPermission(ClosetAddActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(ClosetAddActivity.this,new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },1);
+                }else{
+                    openAlbum();
+                }
+            }
+        });
+        setSupportActionBar(toolbar);
         editName = (EditText) findViewById(R.id.edit_name);
         editMaterial = (EditText) findViewById(R.id.edi_material);
         season = (Spinner) findViewById(R.id.spinner_season);
@@ -96,7 +166,7 @@ public class ClosetAddActivity extends AppCompatActivity {
         temprature.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cloth.settemprature(position+1);
+                cloth.setTemprature(position+1);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -124,21 +194,161 @@ public class ClosetAddActivity extends AppCompatActivity {
         floartingdone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cloth.setName(editName.getText().toString());
-                cloth.setColor(Color.valueOf(colorPickerViewModel.getColor()));
-                cloth.setMaterial(editMaterial.getText().toString());
-                cloth.setBuyDate(pickDate);
-                System.out.println(cloth.getBuyDate().get(Calendar.MONTH));
-                System.out.println(cloth.getBuyDate().get(Calendar.DAY_OF_MONTH));
-                System.out.println(cloth.getSeason());
-                System.out.println(cloth.getColor());
-                System.out.println(cloth.getMaterial());
-                System.out.println(cloth.getName());
-                System.out.println(cloth.gettemprature());
-                System.out.println(cloth.getType());
-                ClosetAddActivity.this.finish();
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ClosetAddActivity.this);
+                dialog.setTitle("Save Confirm");
+                dialog.setMessage("Are you sure to Save this cloth?");
+                dialog.setCancelable(true);
+                dialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cloth.setColor(colorPickerViewModel.getColor());
+                        cloth.setMaterial(editMaterial.getText().toString());
+                        cloth.setBuyDate(pickDate);
+                        cloth.setName(editName.getText().toString()+"_"+cloth.getColor()+"_"+cloth.getMaterial());//                System.out.println(cloth.getBuyDate().get(Calendar.MONTH));
+
+                        cloth.save();
+                        ClosetAddActivity.this.finish();
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                dialog.show();
             }
         });
+    }
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.toolbar_home:
+                Intent intent = new Intent(ClosetAddActivity.this, MainActivity.class);
+                startActivity(intent);
+                intent.putExtra("fragment",2);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    protected void openAlbum(){
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent,CHOOSE_PHOTO);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        // 将拍摄的照片显示出来
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        preview.setImageBitmap(bitmap);
+                        try {
+                            cloth.setBitmap(bitmap);
+                            File file =new File(imageUri.toString());
+                            Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(file);
+                            cloth.setBitmap(compressedImageBitmap);
+                            cloth.save();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try{
+                            File file = new File(imageUri.toString());
+                            Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(file);
+                            cloth.setBitmap(compressedImageBitmap);
+                            Log.i(TAG,"compressed");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    handleImageOnKitKat(data);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    @TargetApi(19)
+    protected void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            // 如果是document类型的Uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1]; // 解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是content类型的Uri，则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath); // 根据图片路径显示图片
+    }
+    protected String getImagePath(Uri uri, String selection) {
+        String path = null;
+        // 通过Uri和selection来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+    protected void displayImage(String imagePath) {
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            preview.setImageBitmap(bitmap);
+            cloth.setBitmap(bitmap);
+            Log.i(TAG,"displayed");
+            try{
+                File file = new File(imagePath);
+                Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(file);
+                cloth.setBitmap(compressedImageBitmap);
+                Log.i(TAG,"compressed");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
+        }
     }
     protected void showDatePickDlg() {
         Calendar calendar = Calendar.getInstance();
@@ -153,7 +363,7 @@ public class ClosetAddActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
     public static final int DIALGE_ID = 0;
-    private void opeAdvancenDialog() {
+    protected void opeAdvancenDialog() {
         int color = colorPickerViewModel.getColor();
 //传入的默认color
         ColorPickerDialog colorPickerDialog = ColorPickerDialog.newBuilder().setColor(color)
@@ -174,7 +384,7 @@ public class ClosetAddActivity extends AppCompatActivity {
         colorPickerDialog.show(getFragmentManager(), "color-picker-dialog");
     }
 
-    private ColorPickerDialogListener pickerDialogListener = new ColorPickerDialogListener() {
+    protected ColorPickerDialogListener pickerDialogListener = new ColorPickerDialogListener() {
         @Override
         public void onColorSelected(int dialogId, @ColorInt int color) {
             if (dialogId == DIALGE_ID) {

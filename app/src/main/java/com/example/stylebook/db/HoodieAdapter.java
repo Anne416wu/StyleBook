@@ -21,7 +21,7 @@ public class HoodieAdapter extends RecyclerView.Adapter<HoodieAdapter.ViewHolder
 
     private static final String TAG = "HoodieAdapter";
     private Context mContext;
-    private List<Hoodie> mClothList;
+    private List<Cloth> mClothList;
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ClothImage;
         TextView ClothName;
@@ -38,7 +38,7 @@ public class HoodieAdapter extends RecyclerView.Adapter<HoodieAdapter.ViewHolder
         }
     }
 
-    public HoodieAdapter(List<Hoodie> ClothList) {
+    public HoodieAdapter(List<Cloth> ClothList) {
         mClothList = ClothList;
     }
 
@@ -67,7 +67,12 @@ public class HoodieAdapter extends RecyclerView.Adapter<HoodieAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         Cloth Cloth = mClothList.get(position);
         holder.ClothName.setText(Cloth.getName());
-        Glide.with(mContext).load(Cloth.getImageId()).into(holder.ClothImage);
+        try{
+            Glide.with(mContext).load(Cloth.getImageId()).into(holder.ClothImage);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override

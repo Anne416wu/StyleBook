@@ -78,7 +78,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:textAlignment="textStart"
-                                android:text="名称"/>
+                                android:text="品牌"/>
                             <EditText
                                 android:id="@+id/edit_name"
                                 android:layout_width="match_parent"

@@ -73,6 +73,7 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder>{
         Cloth Cloth = mClothList.get(position);
         holder.ClothName.setText(Cloth.getName());
         Glide.with(mContext).load(Cloth.getImageId()).into(holder.ClothImage);
+//        Glide.with(mContext).load(Cloth.getBitmap()).into(holder.ClothImage);
     }
 
     @Override

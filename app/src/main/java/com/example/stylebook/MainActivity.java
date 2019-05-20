@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -39,14 +42,19 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.stylebook.db.Cloth;
 import com.example.stylebook.db.Match;
 import com.google.gson.Gson;
 
+import org.litepal.LitePal;
 import org.litepal.util.LogUtil;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import id.zelory.compressor.Compressor;
 import interfaces.heweather.com.interfacesmodule.bean.weather.now.Now;
 import interfaces.heweather.com.interfacesmodule.view.HeConfig;
 import interfaces.heweather.com.interfacesmodule.view.HeWeather;
@@ -81,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             menuItem.performClick();
         }catch (Exception e){
             Log.i(TAG,"fail to change fragment");
-            System.out.println(e.getMessage());
         }
     }
     public void replaceFragment(Fragment fragment) {
@@ -94,11 +101,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs==null){
+            initDatabase();
+        }
         setContentView(R.layout.activity_main);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        replaceFragment(new HomepageFragment());
-
+        Intent intent = getIntent();
+        int data = intent.getIntExtra("fragment",0);
+        //未解决回首页的切换问题
+        if (data==2){
+            replaceFragment(new ScheduleFragment());
+        }
+        else{
+            replaceFragment(new HomepageFragment());
+        }
         HeConfig.init("HE1905190345261281", "7fe7e27ab3f5470ca5450332fe5c8e14");
         HeConfig.switchToFreeServerNode();
         List<String> permissionList = new ArrayList<>();
@@ -121,5 +138,36 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestLocation() {
     }
-
+    private void initDatabase(){
+        //数据库初始化
+        LitePal.getDatabase();
+        Calendar loginddate = Calendar.getInstance();
+        Cloth[] clothes = {
+                new Cloth("hoodie_red", R.drawable.hoddie_red_cotton_spring, Color.RED,"cotton",1,loginddate,"Hoodie",3),
+                new Cloth("hoodie_coffee", R.drawable.hoodie_coffee_cotton_spring,Color.DKGRAY,"cotton",1,loginddate,"Hoodie",3),
+                new Cloth("hoodie_oliver", R.drawable.hoodie_oliver_cotton_spring,Color.GREEN,"cotton",1,loginddate,"Hoodie",3),
+                new Cloth("hoodie_white", R.drawable.hoodie_white_cotton_spring,Color.WHITE,"cotton",1,loginddate,"Hoodie",3),
+                new Cloth("Coat", R.drawable.coat,Color.BLUE,"尼龙",1,loginddate,"Coat",3),
+                new Cloth("Sweater", R.drawable.sweater,Color.GRAY,"羊毛",3,loginddate,"Sweater",4),
+                new Cloth("Shirt", R.drawable.shirt,Color.DKGRAY,"棉",1,loginddate,"Shirt",1),
+                new Cloth("Hoodie", R.drawable.hoodie,Color.WHITE,"棉",1,loginddate,"Hoodie",2),
+                new Cloth("Tshirt", R.drawable.tshirt,Color.WHITE,"棉",2,loginddate,"Tshirt",1),
+                new Cloth("Dress", R.drawable.dress,Color.rgb(247,237,214),"棉",1,loginddate,"Dress",2),
+                new Cloth("Jeans", R.drawable.jeans,Color.BLUE,"牛仔",1,loginddate,"Jean",2),
+                new Cloth("Trouser", R.drawable.trouser,Color.BLUE,"聚酯纤维",3,loginddate,"Trouser",2),
+                new Cloth("Shorts", R.drawable.shorts,Color.BLACK,"牛仔",2,loginddate,"Shorts",1),
+                new Cloth("Skirt", R.drawable.skirt,Color.rgb(247,237,214),"聚酯纤维",1,loginddate,"Skirt",2)};
+        for (int i = 0;i<clothes.length;i++) {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), clothes[i].getImageId());
+                clothes[i].setBitmap(bitmap);
+                File file = new File(getResources().getResourceName(clothes[i].getImageId()));
+                Bitmap compressedImageBitmap = new Compressor(this).compressToBitmap(file);
+                clothes[i].setBitmap(compressedImageBitmap);
+                clothes[i].save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

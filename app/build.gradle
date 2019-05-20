@@ -38,5 +38,5 @@ dependencies {
     implementation 'org.litepal.android:core:2.0.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.jrummyapps:colorpicker:2.1.6'
-
+    implementation 'id.zelory:compressor:2.1.0'
 }

@@ -1,5 +1,7 @@
 package com.example.stylebook.db;
 
+import android.graphics.Bitmap;
+
 import org.litepal.crud.LitePalSupport;
 
 import java.util.Calendar;
@@ -14,6 +16,15 @@ public class Match extends LitePalSupport {
     private int season;
     private List<Calendar> dates;
     private int temprature;
+    private Bitmap bitmap;
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 
     public int getTemprature() {
         return temprature;
